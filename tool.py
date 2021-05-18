@@ -35,6 +35,7 @@ class Patient:
 		#print(df3)
 		df3.to_excel('Dummy_L2S2.xlsx', index=False)
 
+
 		
 		return
 
@@ -48,10 +49,10 @@ class Patient:
 
 
 
-p1 = Patient("Rodger", 36)
-p1.getInfo()
-datetime ='22-03-2018 15:16:46'
-p1.addMeal(1,30,datetime)
+# p1 = Patient("Rodger", 36)
+# p1.getInfo()
+# datetime ='22-03-2018 15:16:46'
+# p1.addMeal(1,30,datetime)
 
 
 
