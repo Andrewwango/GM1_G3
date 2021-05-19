@@ -1,12 +1,8 @@
 import serial
 import time
-from enum import Enum
-
-class Events(Enum):
-    STEPUP = 1
-    STEPDOWN = 2
-    EATING = 3
-    GLITCH = 4
+from events import Events
+from constants import *
+import eventClassification
 
 class Buffer:
     def __init__(self, N):
@@ -27,6 +23,7 @@ class Buffer:
         return sum([abs(b - avg) for b in self.buffer]) / len(self.buffer)
     def score(self, x, useTypical=False):
         avg = self.average(); dev = self.maDev(avg) if not useTypical else self.typicalDev
+        if dev < 1e5: dev = DEFAULT_DEV_WEIGHT
         return abs(x - avg)/dev
     def updateTypicalDev(self):
         self.typicalDev = self.maDev()
@@ -39,6 +36,8 @@ class Event:
     def __init__(self, prev, reading):
         self.start_time = time.time()
         self.end_time = 0
+        self.start_weight = prev
+        self.end_weight = 0
         self.buffer = Buffer(-1)
         self.buffer.add(prev)
         self.buffer.add(reading)
@@ -47,58 +46,73 @@ class Event:
         self.buffer.add(reading)
     def end(self):
         self.end_time = time.time()
-        self.eventType = self.detectEventType()
+        self.end_weight = self.buffer[-1]
+        self.eventType = self.classify()
         print("Event: ", self.eventType, ", time taken: ", int(self.time_taken()), ", weight diff: ", self.net_change())
     def time_taken(self):
         return self.end_time - self.start_time
     def net_change(self):
         return self.buffer[-1] - self.buffer[0]
 
-    def detectEventType(self):
-        change = self.net_change()
-        short_time = self.time_taken() <= 5
-        if change > 10000 and short_time:
-            return Events.STEPUP
-        elif change < -10000 and short_time:
-            return Events.STEPDOWN
-        elif short_time:
-            return Events.GLITCH
-        elif not short_time:
-            return Events.EATING
+    def classify(self):
+        return eventClassification.detectEventType(self)
+
         
 
 class Meal:
     def __init__(self):
+        self.ready = False
         self.started = False
+        self.start_time = 0
+        self.start_weight = 0
+        self.end_time = 0
+        self.end_weight = 0
         self.timeLastAte = 0
     def updateWithEvent(self, event):
-        if event.eventType == Events.EATING and self.started: 
+        if event.eventType == Events.EATING and self.ready:
+            if not self.started:
+                self.started = True
+                self.start_time = event.start_time
+                self.start_weight = event.start_weight
+                print("Meal started")
             self.timeLastAte = time.time()
         elif event.eventType == Events.STEPUP and not self.started:
-            self.started = True
-    
+            self.ready = True
+            self.timeLastAte = time.time()
     def checkIfIdle(self):
-        return (time.time() - self.timeLastAte > 10) and self.started
-    def endMeal(self):
-        print("Ended")
+        return (time.time() - self.timeLastAte > MEAL_TIMEOUT_SECS) and self.ready
+    def checkIfMealValid(self):
+        print(self.started)
+        return (time.time() - self.start_time > MEAL_LENGTH_SECS) and self.started
+    def endMeal(self, reading):
+        print("Meal ended")
+        self.end_time = time.time()
+        self.end_weight = reading
+        success = 0 if self.checkIfMealValid() else -1
         self.reset()
+        return success
     def reset(self):
+        self.ready = False
         self.started = False
 
-ser = serial.Serial('COM3', 57600)
-buffer = Buffer(3)
+class FinishedMeal:
+    def __init__(self, meal):
+        self.start_time, self.end_time, self.start_weight, self.end_weight = meal.start_time, meal.end_time, meal.start_weight, meal.end_weight
+    def __repr__(self):
+        return "Finished meal, start/end time {0},{1}, start/end weight {2},{3}".format(self.start_time, self.end_time, self.start_weight, self.end_weight)
+
+ser = serial.Serial(SERIAL_PORT, SERIAL_BAUD)
+buffer = Buffer(AR_LENGTH)
 events = []
 eventInProgress = False
 ongoingMeal = Meal()
-
-print("\n\n\n\n\n\n\n\n\n\n")
 
 while True:
     reading = int(str(ser.readline())[2:][:-5])
     if not buffer.isFull(): 
         buffer.add(reading)
         continue
-    outlier = buffer.score(reading, useTypical=eventInProgress) > 100
+    outlier = buffer.score(reading, useTypical=eventInProgress) > OUTLIER_Z_SCORE
     if not eventInProgress:
         buffer.updateTypicalDev()
     if not eventInProgress and outlier:
@@ -118,4 +132,10 @@ while True:
     buffer.add(reading)
     #print(buffer.buffer, buffer.average())
 
-    if ongoingMeal.checkIfIdle(): ongoingMeal.endMeal()
+    if ongoingMeal.checkIfIdle(): 
+        success = ongoingMeal.endMeal(reading)
+        if success == -1:
+            print("Invalid Meal"); continue
+        
+        finishedMeal = FinishedMeal(ongoingMeal)
+        print(finishedMeal)

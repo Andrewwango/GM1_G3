@@ -14,12 +14,12 @@ void setup() {
 void loop() {
 
   if (scale.is_ready()) {
-    long reading = scale.read();
+    long reading = (scale.read() - 560000)/685;
     Serial.println(reading);
   } else {
     
   }
 
-  delay(50);
+  delay(100);
   
 }
