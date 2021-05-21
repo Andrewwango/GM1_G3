@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 
 ser = SerialReader()
 buffer = Buffer(INFINITE_LENGTH)
-
+print("Ready")
 while True:
     try:
         reading = ser.readline()

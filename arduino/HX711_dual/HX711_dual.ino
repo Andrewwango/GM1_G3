@@ -28,8 +28,8 @@ void setup() {
 void loop() {
 
   if (scale.is_ready() && scale2.is_ready()) {
-    long reading = (scale.read() - 535600)/1164;
-    long reading2 = (scale2.read() + 311700)/2047;
+    long reading = (scale.read() - 535600)/1164 + 45;
+    long reading2 = (scale2.read() + 311700)/2047 - 90;
     //Serial.print(reading);
     //Serial.print(",");
     //Serial.print(reading2);
