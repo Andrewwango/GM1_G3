@@ -22,7 +22,7 @@ while True:
     if not eventInProgress and outlier:
         eventInProgress = True
         #print("EVENT STARTED with reading,avg, ", reading, buffer.average())
-        events.append(Event(buffer.latest(), reading))
+        events.append(Event([buffer.latest()], reading))
     elif eventInProgress:
         if outlier:
             events[-1].add(reading)

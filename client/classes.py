@@ -11,6 +11,9 @@ class Buffer:
         self.typicalDev = 0
     def __getitem__(self, key):
         return self.buffer[key]
+    def reset(self):
+        self.buffer = []
+        self.typicalDev = 0
     def latest(self): return self.buffer[-1]
     def add(self, x):
         self.buffer.append(x)
@@ -33,13 +36,15 @@ class Buffer:
         return len(self.buffer) == self.N
 
 class Event:
-    def __init__(self, prev, reading):
+    def __init__(self, prevs, reading):
         self.start_time = time.time()
         self.end_time = 0
-        self.start_weight = prev
+        self.start_weight = prevs[0]
         self.end_weight = 0
         self.buffer = Buffer(INFINITE_LENGTH)
-        self.buffer.add(prev)
+        for prev in prevs:
+            self.buffer.add(prev)
+            #print(prev,self.buffer)
         self.buffer.add(reading)
         self.eventType = None
     def add(self, reading):
