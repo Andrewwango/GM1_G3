@@ -14,7 +14,7 @@ ongoingMeal = Meal()
 while True:
     reading = ser.readline()
     if reading == -1:
-        ongoingMeal.forceToggle()
+        ongoingMeal.forceToggle(buffer.latest())
 
     else:
         if not buffer.isFull(): 
@@ -26,7 +26,7 @@ while True:
         if not eventInProgress and outlier:
             eventInProgress = True
             #print("EVENT STARTED with reading,avg, ", reading, buffer.average())
-            events.append(Event([buffer.latest()], reading))
+            events.append(Event([buffer.earliest()], reading))
         elif eventInProgress:
             if outlier:
                 events[-1].add(reading)
@@ -37,13 +37,13 @@ while True:
                 ongoingMeal.updateWithEvent(events[-1])
             
 
-    buffer.add(reading)
-    #print(buffer.buffer, buffer.average())
+        buffer.add(reading)
 
     if ongoingMeal.checkIfIdle() or ongoingMeal.forceEnd: 
-        success = ongoingMeal.endMeal(reading)
+        success = ongoingMeal.endMeal(buffer.latest())
         if success == -1:
-            print("Invalid Meal"); continue
-        
-        finishedMeal = FinishedMeal(ongoingMeal)
-        print(finishedMeal)
+            print("Invalid Meal")
+        else:
+            finishedMeal = FinishedMeal(ongoingMeal)
+            print(finishedMeal)
+        ongoingMeal.reset()

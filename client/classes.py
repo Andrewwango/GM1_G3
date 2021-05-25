@@ -15,6 +15,7 @@ class Buffer:
         self.buffer = []
         self.typicalDev = 0
     def latest(self): return self.buffer[-1]
+    def earliest(self): return self.buffer[0]
     def add(self, x):
         self.buffer.append(x)
         if self.N > 0 and len(self.buffer) > self.N:
@@ -53,7 +54,7 @@ class Event:
         self.end_time = time.time()
         self.end_weight = self.buffer[-1]
         self.eventType = self.classify()
-        print("Event: ", self.eventType, ", time taken: ", int(self.time_taken()), ", weight diff: ", self.net_change())
+        print("Event: ", self.eventType, ", time taken: ", round(self.time_taken(), 2), ", weight diff: ", self.net_change())
     def time_taken(self):
         return self.end_time - self.start_time
     def net_change(self):
@@ -73,8 +74,11 @@ class Meal:
         self.start_weight = 0
         self.end_time = 0
         self.end_weight = 0
-        self.timeLastAte = 0
+        self.step_offset = 0
+        self.timeLastAte = time.time()
     def updateWithEvent(self, event):
+        if event.eventType in [Events.STEPDOWN, Events.STEPUP] and self.started:
+            self.step_offset += event.net_change()
         if not DEMO_MODE:
             if event.eventType == Events.EATING and self.ready:
                 if not self.started:
@@ -86,42 +90,44 @@ class Meal:
             elif event.eventType == Events.STEPUP and not self.started:
                 self.ready = True
                 self.timeLastAte = time.time()
-        else:
-            if self.ready and not self.started:
-                self.ready = False
-                self.started = True
-                self.start_time = event.start_time
-                self.start_weight = event.start_weight
-                print("Meal Started")
-            if event.eventType == Events.STEPDOWN:
-                pass #do keeping track
+
     def checkIfIdle(self):
         return (time.time() - self.timeLastAte > MEAL_TIMEOUT_SECS) and self.ready
     def checkIfMealValid(self):
         print(self.started)
-        return (time.time() - self.start_time > MEAL_LENGTH_SECS) and self.started
+        return ((time.time() - self.start_time > MEAL_LENGTH_SECS) and self.started) or DEMO_MODE
     
-    def forceToggle(self):
+    def forceToggle(self, prev):
         if self.started: 
             self.started = False
             self.forceEnd = True
         else:
             self.ready = True
+            if self.ready and not self.started:
+                self.ready = False
+                self.started = True
+                self.start_time = time.time()
+                self.start_weight = prev
+                print("Meal Started")
     
     def endMeal(self, reading):
         print("Meal ended")
         self.end_time = time.time()
         self.end_weight = reading
         success = 0 if self.checkIfMealValid() else -1
-        self.reset()
         return success
     def reset(self):
         self.forceEnd = False
         self.ready = False
         self.started = False
+        self.start_time = 0; self.start_weight = 0; self.end_time = 0; self.end_weight = 0
+        self.step_offset = 0
 
 class FinishedMeal:
     def __init__(self, meal):
         self.start_time, self.end_time, self.start_weight, self.end_weight = meal.start_time, meal.end_time, meal.start_weight, meal.end_weight
+        self.weight_change_raw = self.end_weight - self.start_weight
+        self.weight_offset = meal.step_offset
+        self.weight_change = self.weight_change_raw - self.weight_offset
     def __repr__(self):
-        return "Finished meal, start/end time {0},{1}, start/end weight {2},{3}".format(self.start_time, self.end_time, self.start_weight, self.end_weight)
+        return "Finished meal, start/end time {0},{1}, start/end weight {2},{3}, change {4}, offset {5}, total change: {6} g".format(self.start_time, self.end_time, self.start_weight, self.end_weight, self.weight_change_raw, self.weight_offset, self.weight_change)
