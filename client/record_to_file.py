@@ -11,6 +11,7 @@ print("Ready")
 while True:
     try:
         reading = ser.readline()
+        print(reading)
         buffer.add(reading)
 
     except KeyboardInterrupt:

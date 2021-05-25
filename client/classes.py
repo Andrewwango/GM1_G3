@@ -68,27 +68,46 @@ class Meal:
     def __init__(self):
         self.ready = False
         self.started = False
+        self.forceEnd = False
         self.start_time = 0
         self.start_weight = 0
         self.end_time = 0
         self.end_weight = 0
         self.timeLastAte = 0
     def updateWithEvent(self, event):
-        if event.eventType == Events.EATING and self.ready:
-            if not self.started:
+        if not DEMO_MODE:
+            if event.eventType == Events.EATING and self.ready:
+                if not self.started:
+                    self.started = True
+                    self.start_time = event.start_time
+                    self.start_weight = event.start_weight
+                    print("Meal started")
+                self.timeLastAte = time.time()
+            elif event.eventType == Events.STEPUP and not self.started:
+                self.ready = True
+                self.timeLastAte = time.time()
+        else:
+            if self.ready and not self.started:
+                self.ready = False
                 self.started = True
                 self.start_time = event.start_time
                 self.start_weight = event.start_weight
-                print("Meal started")
-            self.timeLastAte = time.time()
-        elif event.eventType == Events.STEPUP and not self.started:
-            self.ready = True
-            self.timeLastAte = time.time()
+                print("Meal Started")
+            if event.eventType == Events.STEPDOWN:
+                pass #do keeping track
     def checkIfIdle(self):
         return (time.time() - self.timeLastAte > MEAL_TIMEOUT_SECS) and self.ready
     def checkIfMealValid(self):
         print(self.started)
         return (time.time() - self.start_time > MEAL_LENGTH_SECS) and self.started
+    
+    def forceToggle(self):
+        if self.started: 
+            self.started = False
+            self.forceEnd = True
+        else:
+            self.ready = True
+    
     def endMeal(self, reading):
         print("Meal ended")
         self.end_time = time.time()
@@ -97,6 +116,7 @@ class Meal:
         self.reset()
         return success
     def reset(self):
+        self.forceEnd = False
         self.ready = False
         self.started = False
 
