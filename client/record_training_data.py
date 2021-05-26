@@ -4,7 +4,6 @@ import time, csv
 from read_serial import SerialReader
 from classes import Buffer, Event
 from events import Events
-from matplotlib import pyplot as plt
 
 ser = SerialReader()
 record_buffer = Buffer(INFINITE_LENGTH)
@@ -15,6 +14,7 @@ eventInProgress = False
 
 def saveline(c, buf):
     result_book.append([c] + buf.buffer)
+    print("Saved")
 
 print("Ready")
 while True:
@@ -39,7 +39,7 @@ while True:
                 for _ in range(3):
                     events[-1].buffer.add(ser.readline())
                 events[-1].end()
-                saveline(0 if events[-1].eventType == Events.STEPUP else 1, events[-1].buffer)
+                saveline(events[-1].eventType.value, events[-1].buffer)
                 record_buffer.reset()
 
         buffer.add(reading)
@@ -49,7 +49,7 @@ while True:
     except KeyboardInterrupt:
         break
 
-with open("training_data.csv", mode="w", newline='') as f:
+with open("ml_training/training_data1.csv", mode="a", newline='') as f:
     csvwriter = csv.writer(f, delimiter=',')
     for row in result_book:
         csvwriter.writerow(row)

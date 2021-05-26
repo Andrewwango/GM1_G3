@@ -1,7 +1,7 @@
 from enum import Enum
 
 class Events(Enum):
-    STEPUP = 1
-    STEPDOWN = 2
-    EATING = 3
-    GLITCH = 4
+    STEPUP = 0
+    STEPDOWN = 1
+    EATING = 2
+    GLITCH = 3

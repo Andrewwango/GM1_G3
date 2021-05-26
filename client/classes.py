@@ -1,6 +1,6 @@
 import numpy as np
 from constants import *
-import eventClassification
+import event_classification
 from events import Events
 import time
 
@@ -61,7 +61,7 @@ class Event:
         return self.buffer[-1] - self.buffer[0]
 
     def classify(self):
-        return eventClassification.detectEventType(self)
+        return event_classification.detectEventType(self)
 
         
 

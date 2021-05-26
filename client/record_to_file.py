@@ -16,7 +16,7 @@ while True:
 
     except KeyboardInterrupt:
         print('Interrupted')
-        np.savetxt('experiments{0}.csv'.format(int(time.time())), buffer.buffer, delimiter=',')
+        np.savetxt('experiments/experiments{0}.csv'.format(int(time.time())), buffer.buffer, delimiter=',')
         plt.plot(buffer.buffer)
         plt.show()
         break

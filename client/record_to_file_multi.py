@@ -20,8 +20,8 @@ while True:
 
     except KeyboardInterrupt:
         print('Interrupted')
-        np.savetxt('experiments{0}-{1}.csv'.format(int(time.time()), 1), buffer1.buffer, delimiter=',')
-        np.savetxt('experiments{0}-{1}.csv'.format(int(time.time()), 2), buffer2.buffer, delimiter=',')
-        np.savetxt('experiments{0}-{1}.csv'.format(int(time.time()), 3), buffer3.buffer, delimiter=',')
+        np.savetxt('experiments/experiments{0}-{1}.csv'.format(int(time.time()), 1), buffer1.buffer, delimiter=',')
+        np.savetxt('experiments/experiments{0}-{1}.csv'.format(int(time.time()), 2), buffer2.buffer, delimiter=',')
+        np.savetxt('experiments/experiments{0}-{1}.csv'.format(int(time.time()), 3), buffer3.buffer, delimiter=',')
         print("Success")
         break

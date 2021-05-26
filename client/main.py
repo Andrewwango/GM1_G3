@@ -4,7 +4,6 @@ import numpy as np
 from read_serial import SerialReader
 from classes import Buffer, Meal, Event, FinishedMeal
 
-
 ser = SerialReader()
 buffer = Buffer(AR_LENGTH)
 events = []
