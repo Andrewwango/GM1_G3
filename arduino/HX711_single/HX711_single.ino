@@ -22,9 +22,9 @@ void loop() {
 
   if (scale.is_ready()) {
     long reading = (scale.read() - 550550)/702 - 0;
-    if (reading < 0) {
-      reading = 0;
-    }
+    //if (reading < 0) {
+    //  reading = 0;
+    //}
     Serial.println(reading);
   } else {
     
