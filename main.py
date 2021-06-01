@@ -1,4 +1,7 @@
-from events import Events
+"""
+Main script to run on bedside computer which reads data, processes and submits to web system.
+"""
+
 from constants import *
 import numpy as np
 from read_serial import SerialReader
@@ -10,11 +13,16 @@ events = []
 eventInProgress = False
 ongoingMeal = Meal()
 print("Ready")
-while True:
-    reading = ser.readline()
-    if reading == -1:
-        ongoingMeal.forceToggle(buffer.latest())
 
+"""
+Main loop whilst bedside computer is on and placemat is connected
+"""
+while True:
+
+    # Read sensor data from Arduino via serial
+    reading = ser.readline()
+    if ser.isButtonPressed(reading): 
+        ongoingMeal.forceToggle(buffer.latest())
     else:
         if not buffer.isFull(): 
             buffer.add(reading)
@@ -24,14 +32,12 @@ while True:
             buffer.updateTypicalDev()
         if not eventInProgress and outlier:
             eventInProgress = True
-            #print("EVENT STARTED with reading,avg, ", reading, buffer.average())
             events.append(Event([buffer.earliest()], reading))
         elif eventInProgress:
             if outlier:
                 events[-1].add(reading)
             else:
                 eventInProgress = False
-                #print("EVENT ENDED with reading,avg, ", reading, buffer.average())
                 events[-1].end()
                 ongoingMeal.updateWithEvent(events[-1])
             
@@ -41,7 +47,7 @@ while True:
     if ongoingMeal.checkIfIdle() or ongoingMeal.forceEnd: 
         success = ongoingMeal.endMeal(buffer.latest())
         if success == -1:
-            print("Invalid Meal")
+            print("Invalid Meal!")
         else:
             finishedMeal = FinishedMeal(ongoingMeal)
             print(finishedMeal)

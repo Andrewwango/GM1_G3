@@ -42,14 +42,14 @@ void setup(){
 
 void loop()
 {
-  print1();
-  delay(1000);
-  print2();
-  delay(1000);
-  print3();
-  delay(1000);
-  print4();
-  delay(1000);  
-  print5();
-  delay(1000);
+  //print1();
+  //delay(1000);
+  //print2();
+  //delay(1000);
+  //print3();
+  //delay(1000);
+  //print4();
+  //delay(1000);  
+  //print5();
+  //delay(1000);
 }
