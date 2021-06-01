@@ -52,8 +52,8 @@ class Patient:
 		#should be api stuff to get info from L2S2 but now it is just demo with excel
 
 	#give date time as %d-%m-%Y %H:%M:%S string
-	def addMeal(self, code, weight, datetime):
-		dtime = pd.to_datetime(datetime,format="%d-%m-%Y %H:%M:%S")
+	def addMeal(self, code, dessert_w, main_w, datetime):
+		#dtime = pd.to_datetime(datetime,format="%d-%m-%Y %H:%M:%S")
 		# new_row = pd.Series( [datetime, code, weight,calInfo(code,weight)], index=self.info.columns )
 		# df3 = self.info.append(new_row, ignore_index=True)
 		# #print(df3)
@@ -63,8 +63,8 @@ class Patient:
        # {'name': 'Date1', 'value': to_long_time(datetime.now())},
     	#{'id': 7, 'value':  to_long_time(dtime)},
 		
-        #{'id': 8, 'value': ''  },
-        {'id': 10, 'value': str(weight)}
+        {'id': 16, 'value': str(dessert_w)  },
+        {'id': 10, 'value': str(main_w)}
        
 
        # {'name': 'Chart1', 'value': 'somefile.json', 'attachments': [{'description': 'Some description', 'key': file_key, 'original_file_name': 'somefile.json', 'saved_date_time': to_long_time(datetime(2018, 3, 7))}]},
