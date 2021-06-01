@@ -2,7 +2,7 @@ import numpy
 import pandas as pd 
 import datetime
 import matplotlib as plt
-from ApiTest import *
+from .ApiTest import *
 
 
 
@@ -92,11 +92,11 @@ class Patient:
 
 
 
-p1 = Patient("Rodger", 38.00,33)
+#p1 = Patient("Rodger", 38.00,33)
 #p1.getInfo()
-datetime ='22-03-2018 15:16:46'
-p1.addMeal(1,40,datetime)
-p1.sendAl(False)
+#datetime ='22-03-2018 15:16:46'
+#p1.addMeal(1,40,datetime)
+#p1.sendAl(False)
 
 
 

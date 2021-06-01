@@ -9,7 +9,7 @@ buffer = Buffer(AR_LENGTH)
 events = []
 eventInProgress = False
 ongoingMeal = Meal()
-
+print("Ready")
 while True:
     reading = ser.readline()
     if reading == -1:

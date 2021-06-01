@@ -2,7 +2,7 @@ import numpy as np
 from constants import *
 import event_classification
 from events import Events
-from tool import Patient
+from api.tool import Patient
 import time
 
 class Buffer:
@@ -131,7 +131,7 @@ class FinishedMeal:
         self.weight_offset = meal.step_offset
         self.weight_change = self.weight_change_raw - self.weight_offset
         p1 = Patient("Rodger", 30)
-        p1.addMeal(1,30,"datetime")
+        p1.addMeal(1,self.weight_change_raw,str(self.tot(self.end_time)))
     def tot(self,t):
         return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(t))
     def __repr__(self):
