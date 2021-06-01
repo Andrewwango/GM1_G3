@@ -24,16 +24,16 @@ void setup() {
 void loop() {
 
   if (scale.is_ready() && scale2.is_ready()) {
-    long reading = (scale.read() - 127150)/1891 - 229;
-    long reading2 = (scale2.read() - 580750)/1017 + 447;
+    long reading = (scale.read() - 468400)/1090 - 0;
+    long reading2 = (scale2.read() - 215200)/2205 + 0;
     long combined = reading + reading2;
     if (combined < 0) {
       combined = 0;
     }
-    Serial.print(reading);
-    Serial.print(",");
-    Serial.print(reading2);
-    Serial.print(",");
+    //Serial.print(reading);
+    //Serial.print(",");
+    //Serial.print(reading2);
+    //Serial.print(",");
     Serial.println(combined);
   } else {
     
