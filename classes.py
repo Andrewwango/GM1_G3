@@ -130,8 +130,8 @@ class FinishedMeal:
         self.weight_change_raw = self.end_weight - self.start_weight
         self.weight_offset = meal.step_offset
         self.weight_change = self.weight_change_raw - self.weight_offset
-        p1 = Patient("Rodger", 30)
-        p1.addMeal(1,self.weight_change_raw,str(self.tot(self.end_time)))
+        p1 = Patient("Rodger", 30, 33)
+        p1.addMeal(1,0,-1* self.weight_change_raw,str(self.tot(self.end_time)))
     def tot(self,t):
         return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(t))
     def __repr__(self):
