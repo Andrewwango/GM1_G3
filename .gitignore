@@ -3,6 +3,11 @@ record_to_file_multi.py
 record_training_data.py
 test.py
 
+.DS_Store
+api/.DS_Store
+arduino/.DS_Store
+GM1_wm/.DS_Store
+
 GM1_wm/.ipynb_checkpoints/
 GM1_wm/__pycache__
 ml_training/.ipynb_checkpoints/
