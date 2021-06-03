@@ -2,6 +2,7 @@ record_to_file.py
 record_to_file_multi.py
 record_training_data.py
 test.py
+extract_training_data.py
 
 .DS_Store
 api/.DS_Store
