@@ -227,7 +227,7 @@ class Meal:
     def forceToggle(self, prev):
         """
         Toggle meal start/end when button is pressed in demo mode
-        Parameters : int : prev : 
+        Parameters : int : prev : start weight for forced meal start
         """
         if self.started: 
             self.started = False
@@ -242,12 +242,20 @@ class Meal:
                 print("Meal Started")
     
     def endMeal(self, reading):
+        """
+        End current meal
+        Parameters : int : reading : end weight for meal ending
+        Returns : int : whether meal was valid or not
+        """
         print("Meal ended")
         self.end_time = time.time()
         self.end_weight = reading
-        success = 0 if self.checkIfMealValid() else -1
-        return success
+        return 0 if self.checkIfMealValid() else -1
+    
     def reset(self):
+        """
+        Reset current meal to wait for another meal start
+        """
         self.forceEnd = False
         self.ready = False
         self.started = False
@@ -255,14 +263,41 @@ class Meal:
         self.step_offset = 0
 
 class FinishedMeal:
+    """
+    Class to store finished, validated meal to be uploaded
+    Methods: tot, upload_meal, __repr__
+    Attributes: int : start_time, end_time : time at meal start and end
+                int : start_weight, end_weight : weight readings at meal start and end
+                int : weight_offset : step offsets to be taken into account
+                int : weight_change_raw : total difference of weight from start to end
+                int : weight_change : raw change with offset taken into account
+    """
     def __init__(self, meal):
+        """
+        Initialised finished meal with previous meal and calculate weight changes
+        Parameters: Meal : meal : meal to be finished.
+        """
         self.start_time, self.end_time, self.start_weight, self.end_weight = meal.start_time, meal.end_time, meal.start_weight, meal.end_weight
-        self.weight_change_raw = self.end_weight - self.start_weight
         self.weight_offset = meal.step_offset
+        self.weight_change_raw = self.end_weight - self.start_weight
         self.weight_change = self.weight_change_raw - self.weight_offset
-        p1 = Patient("Rodger", 30, 33)
+    
+    def upload_meal(self, patient_data=None):
+        """
+        Upload meal data to API
+        """
+        p1 = Patient(*patient_data)
         p1.addMeal(1,0,-1* self.weight_change_raw,str(self.tot(self.end_time)))
+
     def tot(self,t):
+        """
+        Return time in nice datetime format
+        """
         return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(t))
+    
     def __repr__(self):
-        return "Finished meal, start/end time {0},{1}, start/end weight {2},{3}, change {4}, offset {5}, total change: {6} g".format(self.tot(self.start_time), self.tot(self.end_time), self.start_weight, self.end_weight, self.weight_change_raw, self.weight_offset, self.weight_change)
+        """
+        Return summary of finished meal on print
+        """
+        return "Finished meal, start/end time {0},{1}, start/end weight {2},{3}, change {4}, offset {5}, total change: {6} g"\
+            .format(self.tot(self.start_time), self.tot(self.end_time), self.start_weight, self.end_weight, self.weight_change_raw, self.weight_offset, self.weight_change)

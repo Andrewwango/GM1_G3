@@ -50,5 +50,6 @@ while True:
             print("Invalid Meal!")
         else:
             finishedMeal = FinishedMeal(ongoingMeal)
+            finishedMeal.upload_meal(patient_data=["Rodger", 30, 33])
             print(finishedMeal)
         ongoingMeal.reset()
