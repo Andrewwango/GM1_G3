@@ -24,8 +24,8 @@ void setup() {
 void loop() {
 
   if (scale.is_ready() && scale2.is_ready()) {
-    long reading = (scale.read() - 468400)/1090 - 0;
-    long reading2 = (scale2.read() - 215200)/2205 + 0;
+    long reading = (scale.read() - 468400)/1090-13;
+    long reading2 = (scale2.read() - 215200)/2205-1;
     long combined = reading + reading2;
     if (combined < 0) {
       combined = 0;
