@@ -1,3 +1,6 @@
+"""
+Funcitons to make graphs look nice. From the engineering dept
+"""
 import ipywidgets as widgets
 import matplotlib.pyplot as plt
 from IPython.display import Math, HTML, display, Latex, YouTubeVideo, clear_output

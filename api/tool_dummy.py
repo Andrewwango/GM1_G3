@@ -1,3 +1,8 @@
+
+"""
+Patient class with dummy L2S2 system
+"""
+
 import numpy 
 import pandas as pd 
 import datetime
@@ -35,31 +40,12 @@ class Patient:
 	#give date time as %d-%m-%Y %H:%M:%S string
 	def addMeal(self, code, weight, datetime):
 		dtime = pd.to_datetime(datetime,format="%d-%m-%Y %H:%M:%S")
-		# new_row = pd.Series( [datetime, code, weight,calInfo(code,weight)], index=self.info.columns )
-		# df3 = self.info.append(new_row, ignore_index=True)
-		# #print(df3)
-		# df3.to_excel('Dummy_L2S2.xlsx', index=False)
+		new_row = pd.Series( [datetime, code, weight,calInfo(code,weight)], index=self.info.columns )
+		df3 = self.info.append(new_row, ignore_index=True)
+		#print(df3)
+		df3.to_excel('Dummy_L2S2.xlsx', index=False)
 
-		values = [
-       # {'name': 'Date1', 'value': to_long_time(datetime.now())},
-    	#{'id': 7, 'value':  to_long_time(dtime)},
 		
-        #{'id': 8, 'value': ''  },
-        {'id': 10, 'value': str(weight)}
-       
-
-       # {'name': 'Chart1', 'value': 'somefile.json', 'attachments': [{'description': 'Some description', 'key': file_key, 'original_file_name': 'somefile.json', 'saved_date_time': to_long_time(datetime(2018, 3, 7))}]},
-   		]	
-   		
-		_key_plate_template_id = "5f422db9-3c0f-491f-8c88-1d6c55f1733a"
-
-		test_plate_template_name = 'Measurement_Plate'
-		template = template_read_active_full(test_plate_template_name)
-	
-		template_id = template["id"]
-		template_id = _key_plate_template_id
-		data_create(self.tid, template_id, values)
-
 		
 		return
 

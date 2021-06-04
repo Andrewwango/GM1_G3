@@ -1,3 +1,7 @@
+
+"""
+API funcitons 
+"""
 import asyncio
 from datetime import datetime
 import requests

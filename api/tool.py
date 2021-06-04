@@ -1,3 +1,8 @@
+"""
+
+Patient class with real L2S2 system
+"""
+
 import numpy 
 import pandas as pd 
 import datetime

@@ -1,7 +1,7 @@
-#!/usr/bin/env python
-# coding: utf-8
 
-# In[442]:
+ """
+Code to demonstrate how the wieght of a patietent can be predicted from the calories and previous weight data using a baysian regression model 
+ """
 
 
 import numpy as np
