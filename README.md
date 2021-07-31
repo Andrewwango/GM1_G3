@@ -8,11 +8,13 @@ A solution for nutrition and hydration monitoring for patients in hospital care.
 ## Implementation
 
 ![](docs/Processing.png)
+
 Figure 3: design of information processing subsystem in terms of actions needed.
 
 The bedside computer contains Python scripts that continually read from the serial bus connected to the Arduino. Then, it is appended to a moving buffer representing the autoregressive model of Figure 3. Event detection is done by a simple z-score test which starts an event if a new reading is an outlier. An event classification algorithm using machine learning was implemented, which learns from a dataset of different events (e.g. “Eating”, “Step Up”, “Step Down”, “Glitch” - see Figure 5) taken from the placemat recordings and predicts the category given new events. The dataset was collected from mechanical tests involving eating various meals off the mat, and placing and removing objects. First, the whole detected events are used as features for the algorithm. These features are standardised to 20 dimensions and normalised to between 0 and 1. No dimensionality reduction was used, although that could be scope for further work. Then, a simple Gaussian Naive Bayes classifier was used which achieved 100% accuracy on our test-set. The algorithm was integrated into the prototype and achieves realistic classification when using the placemat normally.
 
 ![](docs/ML.png)
+
 Figure 5: Machine learning pipeline to classify events (i.e. what’s happening on the placemat). Right, examples of raw unprocessed samples (showing steps and eating events).
 
 Meal grouping would ideally work on the scale of hours. Since meal frequency is very low (3 a day), the system will always have improved accuracy if it has a long inactivity timeout. For demonstration purposes we use a button to force end. Therefore this avoids having to wait for the system to recognise the end of a meal during demonstration!
